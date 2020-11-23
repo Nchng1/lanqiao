@@ -2,7 +2,7 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.*;
 import java.io.*;
 
-public class AI extends MIDlet implement Runable
+public class AI extends MIDlet
 {
 	Display display;
 	MainCanvas mc;
@@ -18,7 +18,7 @@ public class AI extends MIDlet implement Runable
 	public void pauseApp(){
 	}
 }
-class MainCanvas extends Canvas
+class MainCanvas extends Canvas implements Runnable
 {
 
 	/*
@@ -27,8 +27,9 @@ class MainCanvas extends Canvas
 	*/
 	int heroX,heroY,bossX,bossY;
 	int Flag=1;
-	Image currentImg;
+	Thread thread;
 	Image bossImg;
+	Image currentImg;
 	Image img[][] = new Image[4][3];//4个方向，3张图片,0表示down，1表示left，2表示right，3表示up
 
 /*一位数组改造
@@ -54,10 +55,12 @@ class MainCanvas extends Canvas
 
 */
 
+
+
+
 	public MainCanvas(){
 		try
 		{
-			
 			for(int i =0;i < img.length;i++){
 				for(int j = 0;j < img[i].length;j++){
 					img[i][j]=Image.createImage("/sayo" +i+j+".png");
@@ -70,6 +73,8 @@ class MainCanvas extends Canvas
 			bossX = 0;
 			bossY = 0;
 
+			thread = new Thread(this);
+			thread.start();
 			
 		}
 		catch (IOException e)
@@ -77,13 +82,7 @@ class MainCanvas extends Canvas
 			e.printStackTrace();
 		}
 	}
-	public void paint(Graphics g){
-		g.setColor(0,255,255);
-		g.fillRect(0,0,getWidth(),getHeight());
-		g.drawImage(bossImg,bossX,bossY,0);
-		g.drawImage(currentImg,heroX,heroY,0);//120：X坐标、100：Y坐标
-	}
-	
+
 	public void changePicAndMove(int direction){
 		if(Flag == 1){
 				currentImg=img[direction][1];
@@ -92,9 +91,39 @@ class MainCanvas extends Canvas
 				currentImg=img[direction][2];
 				Flag=1;
 			}
-				repaint();
 	}
 
+	public void run(){
+		while(true){
+
+			try{
+				thread.sleep(200);//fps:刷新率
+			}
+			catch(InterruptedException e){
+				e.printStackTrace();
+			}
+			if(bossX < heroX){
+				bossX++;
+			}else{
+				bossX--;
+			}
+			if(bossY < heroY){
+				bossY++;
+			}else{
+				bossY--;
+			}
+			repaint();
+			}
+	}
+
+
+
+	public void paint(Graphics g){
+		g.setColor(0,255,255);
+		g.fillRect(0,0,getWidth(),getHeight());
+		g.drawImage(bossImg,bossX,bossY,0);
+		g.drawImage(currentImg,heroX,heroY,0);//120：X坐标、100：Y坐标
+	}
 	public void keyPressed(int keyCode){
 		int action=getGameAction(keyCode);
 		/*
@@ -103,21 +132,22 @@ class MainCanvas extends Canvas
 
 		if(action==LEFT){
 			changePicAndMove(1);
-			x = x-2;
+			heroX = heroX-5;		
 		}
 		if(action==RIGHT){
 			changePicAndMove(2);
-			x = x+2;
+			heroX = heroX+5;
 		}
-		if(action==UP){
+		 if(action==UP){
 			changePicAndMove(3);
-			y = y -2;
+			heroY = heroY - 5;
 		}
 	  if(action==DOWN){
 			changePicAndMove(0);
-			y = y+ 2;
+			heroY = heroY + 5;
 	  }
 	}
+	
 }
 
 

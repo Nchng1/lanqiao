@@ -28,7 +28,7 @@ class MainCanvas extends Canvas
 	int heroX,heroY,bossX,bossY;
 	int Flag=1;
 	Image currentImg;
-	Image bossImg;
+	Image bossImg = Image.createImage("/zuzu000.png");
 	Image img[][] = new Image[4][3];//4个方向，3张图片,0表示down，1表示left，2表示right，3表示up
 
 /*一位数组改造
@@ -54,6 +54,9 @@ class MainCanvas extends Canvas
 
 */
 
+
+
+
 	public MainCanvas(){
 		try
 		{
@@ -64,7 +67,6 @@ class MainCanvas extends Canvas
 				}
 			}
 			currentImg=img[0][0];
-			bossImg = Image.createImage("/zuzu000.png");
 			heroX = 120;
 			heroY = 100;
 			bossX = 0;
